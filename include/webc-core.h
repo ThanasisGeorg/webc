@@ -66,11 +66,15 @@ typedef enum {
     ATTR_REL,
     ATTR_SRC,
     ATTR_STYLE,
+    ATTR_TABINDEX,
     ATTR_TARGET,
     ATTR_TITLE,
     ATTR_TYPE,
     ATTR_VALUE,
+    ATTR_CHECKED,
     ATTR_WIDTH,
+    ATTR_ROLE,
+    ATTR_ONCLICK,
     
     ATTRIBUTE_NAME_COUNT
 } AttributeName;
@@ -105,8 +109,23 @@ typedef struct {
     Cstr method;
     Cstr action;
     Cstr type;
+    Cstr tabindex;
     Cstr value;
+    Cstr name;
+    Cstr role;
+    Cstr checked;
+    Cstr onclick;
 } Modifier;
+
+#define CLASS(cls) \
+    WEBC_UseModifier((Modifier) { .class = cls }) 
+
+#define STYLE(stl) \
+    WEBC_UseModifier((Modifier) { .style= stl }) 
+
+#define SRC(s) \
+    WEBC_UseModifier((Modifier) { .src= s }) 
+
 
 typedef void (*BlockContents)(char** buffer);
 
@@ -352,6 +371,8 @@ WEBCAPI void WEBC_UlStart(char** buffer, AttributeList attributes);
 WEBCAPI void WEBC_UlEnd(char** buffer);
 WEBCAPI void WEBC_FooterStart(char** buffer, AttributeList attributes);
 WEBCAPI void WEBC_FooterEnd(char** buffer);
+WEBCAPI void WEBC_ButtonStart(char** buffer, AttributeList attributes);
+WEBCAPI void WEBC_ButtonEnd(char** buffer);
 
 // TODO: maybe add more Start-End pair for easier use
 
