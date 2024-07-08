@@ -83,6 +83,44 @@ WEBCAPI Cstr WEBC_AttributeNameToString(AttributeName attr)
             return "role";
         case ATTR_ONCLICK:
             return "onclick";
+        case ATTR_ONCONTEXTMENU:
+            return "oncontextmenu";
+        case ATTR_ONDBLCLICK:
+            return "ondblclick";
+        case ATTR_ONMOUSEDOWN:
+            return "onmousedown";
+        case ATTR_ONMOUSEENTER:
+            return "onmouseenter";
+        case ATTR_ONMOUSELEAVE:
+            return "onmouseleave";
+        case ATTR_ONMOUSEMOVE:
+            return "onmousemove";
+        case ATTR_ONMOUSEOUT:
+            return "onmouseout";
+        case ATTR_ONMOUSEOVER:
+            return "onmouseover";
+        case ATTR_ONMOUSEUP:
+            return "onmouseup";
+        case ATTR_FOR:
+            return "for";
+        case ATTR_ARIA_LABEL:
+            return "aria-label";
+        case ATTR_PLACEHOLDER:
+            return "placeholder";
+        case ATTR_DATA_PREFIX:
+            return "data-prefix";
+        case ATTR_DATA_TIP:
+            return "data-tip";
+        case ATTR_MAX:
+            return "max";
+        case ATTR_MIN:
+            return "min";
+        case ATTR_STEP:
+            return "step";
+        case ATTR_DISABLED:
+            return "disabled";
+        case ATTR_SELECTED:
+            return "selected";
         default:
             break;
     }
@@ -153,7 +191,28 @@ WEBCAPI AttributeList WEBC_UseModifier(Modifier modifier)
     if (modifier.checked != NULL) list.count++;
     if (modifier.tabindex != NULL) list.count++;
     if (modifier.role != NULL) list.count++;
-    if (modifier.onclick != NULL) list.count++;
+    if (modifier.mouse_events.onclick != NULL) list.count++;
+    if (modifier.mouse_events.onmouseup != NULL) list.count++;
+    if (modifier.mouse_events.onclick != NULL) list.count++;
+    if (modifier.mouse_events.oncontextmenu != NULL) list.count++;
+    if (modifier.mouse_events.ondblclick != NULL) list.count++;
+    if (modifier.mouse_events.onmousedown != NULL) list.count++;
+    if (modifier.mouse_events.onmouseenter != NULL) list.count++;
+    if (modifier.mouse_events.onmouseleave != NULL) list.count++;
+    if (modifier.mouse_events.onmousemove != NULL) list.count++;
+    if (modifier.mouse_events.onmouseout != NULL) list.count++;
+    if (modifier.mouse_events.onmouseover != NULL) list.count++;
+    if (modifier.for_ != NULL) list.count++;
+    if (modifier.aria_label != NULL) list.count++;
+    if (modifier.placeholder != NULL) list.count++;
+    if (modifier.data_prefix != NULL) list.count++;
+    if (modifier.data_tip != NULL) list.count++;
+    if (modifier.max != NULL) list.count++;
+    if (modifier.min != NULL) list.count++;
+    if (modifier.step != NULL) list.count++;
+    if (modifier.disabled > 0) list.count++;
+    if(modifier.selected > 0) list.count++;
+
 
     list.items = (Attribute**) malloc(sizeof(list.items[0]) * list.count);
     list.count = 0;
@@ -215,8 +274,57 @@ WEBCAPI AttributeList WEBC_UseModifier(Modifier modifier)
     if (modifier.role != NULL)
         list.items[list.count++] = WEBC_MakeAttribute(ATTR_ROLE,  modifier.role);
 
-    if (modifier.onclick != NULL)
-        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONCLICK,  modifier.onclick);
+    if (modifier.for_ != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_FOR,  modifier.for_);
 
+    if (modifier.aria_label != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ARIA_LABEL,  modifier.aria_label);
+
+    if (modifier.placeholder != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_PLACEHOLDER,  modifier.placeholder);
+
+    if (modifier.data_prefix != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_DATA_PREFIX,  modifier.data_prefix);
+
+    if (modifier.data_tip != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_DATA_TIP,  modifier.data_tip);
+
+    if (modifier.max != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_MAX,  modifier.max);
+
+    if (modifier.min != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_MIN,  modifier.min);
+
+    if (modifier.step != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_STEP,  modifier.step);
+
+    if(modifier.disabled > 0){
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_DISABLED, NULL);
+    }
+    if(modifier.selected > 0){
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_SELECTED, NULL);
+    }
+
+
+    if(modifier.mouse_events.onclick != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONCLICK, modifier.mouse_events.onclick);
+    if(modifier.mouse_events.oncontextmenu != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONCONTEXTMENU, modifier.mouse_events.oncontextmenu);
+    if(modifier.mouse_events.ondblclick != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONDBLCLICK, modifier.mouse_events.ondblclick);
+    if(modifier.mouse_events.onmousedown != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONMOUSEDOWN, modifier.mouse_events.onmousedown);
+    if(modifier.mouse_events.onmouseenter != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONMOUSEENTER, modifier.mouse_events.onmouseenter);
+    if(modifier.mouse_events.onmouseleave != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONMOUSELEAVE, modifier.mouse_events.onmouseleave);
+    if(modifier.mouse_events.onmousemove != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONMOUSEMOVE, modifier.mouse_events.onmousemove);
+    if(modifier.mouse_events.onmouseout != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONMOUSEOUT, modifier.mouse_events.onmouseout);
+    if(modifier.mouse_events.onmouseover != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONMOUSEOVER, modifier.mouse_events.onmouseover);
+    if(modifier.mouse_events.onmouseup != NULL)
+        list.items[list.count++] = WEBC_MakeAttribute(ATTR_ONMOUSEUP, modifier.mouse_events.onmouseup);
     return list;
 }

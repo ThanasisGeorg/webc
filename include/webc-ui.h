@@ -25,7 +25,7 @@
 /**
  * @file webc-ui.h
  * @author KDesp73 (Konstantinos Despoinidis)
- * @version 0.0.1
+ * @version 0.0.3
  */
 
 #ifndef WEBCUI_H
@@ -38,6 +38,34 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// ############ Colors ############ //
+
+#define DAISY_COLOR_PRIMARY "primary"
+#define DAISY_COLOR_PRIMARY_CONTENT "primary-content"
+#define DAISY_COLOR_SECONDARY "secondary"
+#define DAISY_COLOR_SECONDARY_CONTENT "secondary-content"
+#define DAISY_COLOR_ACCENT "accent"
+#define DAISY_COLOR_ACCENT_CONTENT "accent-content"
+#define DAISY_COLOR_NEUTRAL "neutral"
+#define DAISY_COLOR_NEUTRAL_CONTENT "neutral-content"
+#define DAISY_COLOR_BASE_100 "base-100"
+#define DAISY_COLOR_BASE_200 "base-200"
+#define DAISY_COLOR_BASE_300 "base-300"
+#define DAISY_COLOR_INFO "info"
+#define DAISY_COLOR_INFO_CONTENT "info-content"
+#define DAISY_COLOR_SUCCESS "success"
+#define DAISY_COLOR_SUCCESS_CONTENT "success-content"
+#define DAISY_COLOR_WARNING "warning"
+#define DAISY_COLOR_WARNING_CONTENT "warning-content"
+#define DAISY_COLOR_ERROR "error"
+#define DAISY_COLOR_ERROR_CONTENT "error-content"
+
+#define DAISY_SIZE_XS "xs"
+#define DAISY_SIZE_SM "sm"
+#define DAISY_SIZE_MD "md"
+#define DAISY_SIZE_LG "lg"
+
 
 // ############ Types ############ //
 
@@ -105,7 +133,7 @@ typedef struct {
     Cstr text;
     Cstr color;
     Cstr svg;
-    Cstr onclick;
+    MouseEvents events;
 } Button;
 
 typedef enum {
@@ -120,6 +148,33 @@ typedef enum {
     BUTTON_LOADING,
     BUTTON_LOADING_TEXT
 } ButtonType;
+
+typedef struct {
+    Cstr title;
+    Cstr link;
+    Cstr target;
+} NavLink;
+
+typedef enum {
+    LOADING_SPINNER,
+    LOADING_DOTS,
+    LOADING_RING,
+    LOADING_BALL,
+    LOADING_BAR,
+    LOADING_INFINITY
+} LoadingType;
+
+typedef struct {
+    Cstr prefix;
+    Cstr code;
+} CodeLine;
+
+// ############ Utils ############ //
+
+#define SECURE_STR(s) ((s == NULL) ? "NULL" : s)
+int is_valid_daisy_size(Cstr size);
+int is_valid_daisy_color(Cstr color);
+void append_class_attr(char** class, Cstr attr);
 
 // ############ UI Elements ############ //
 
@@ -154,8 +209,6 @@ WEBCAPI void WEBC_DaisyAvatar(char** buffer, AvatarType type, Cstr img_src, Cstr
  * https://daisyui.com/components/badge/
  *
  * See colors at: https://daisyui.com/docs/colors/
- *
- * Example: WEBC_DaisyBadge(&buffer, BADGE_DEFAULT, "primary", "Example");
  */
 WEBCAPI void WEBC_DaisyBadge(char** buffer, BadgeType type, Cstr color, Cstr text);
 
@@ -179,7 +232,7 @@ WEBCAPI void WEBC_DaisyChatBubble(char** buffer, ChatBubbleType type, ChatBubble
 WEBCAPI void WEBC_DaisyCollapse(char** buffer, Cstr title, Cstr contents);
 
 /**
- * https://daisyui.com.components/alert/
+ * https://daisyui.com/components/alert/
  */
 WEBCAPI void WEBC_DaisyAlert(char** buffer, AlertType type, Cstr text);
 
@@ -187,6 +240,139 @@ WEBCAPI void WEBC_DaisyAlert(char** buffer, AlertType type, Cstr text);
  * https://daisyui.com/components/button/
  */
 WEBCAPI void WEBC_DaisyButton(char** buffer, ButtonType type, Button button);
+
+/**
+ * https://daisyui.com/components/checkbox/
+ *
+ * Set color to NULL to use default color
+ */
+WEBCAPI void WEBC_DaisyCheckbox(char** buffer, Cstr label, Cstr color);
+
+/**
+ * https://daisyui.com/components/drawer/
+ *
+ * Set sidebar_items to NULL or sidebar_items_counte to 0, to use navbar_content in both cases
+ */
+WEBCAPI void WEBC_DaisyNavbarSidebar(
+        char** buffer, 
+        Cstr title, 
+        NavLink navbar_items[],
+        size_t navbar_items_count,
+        NavLink sidebar_items[],
+        size_t sidebar_items_count,
+        BlockContents page_content);
+
+/**
+ * https://daisyui.com/components/dropdown/
+ */
+WEBCAPI void WEBC_DaisyDropdown(char** buffer, Cstr title, NavLink items[], size_t count);
+
+/**
+ * https://daisyui.com/components/loading/
+ *
+ * @param size [xs | sm | md | lg]
+ */
+WEBCAPI void WEBC_DaisyLoading(char** buffer, LoadingType type, Cstr size);
+
+/**
+ * https://daisyui.com/components/file-input/
+ */
+WEBCAPI void WEBC_DaisyFileInput(char** buffer, Cstr color);
+
+/**
+ * https://daisyui.com/components/indicator/
+ */
+WEBCAPI void WEBC_DaisyIndicator(char** buffer, Cstr text, BlockContents toplaceon);
+
+/**
+ * https://daisyui.com/components/input/
+ *
+ * @param icon The svg html (viewBox should be "0 0 16 16")
+ */
+WEBCAPI void WEBC_DaisyTextInput(char** buffer, int password, Cstr placeholder, Cstr icon);
+
+/**
+ * https://daisyui.com/components/mockup-code/
+ */
+WEBCAPI void WEBC_DaisyCode(char** buffer, Cstr color, CodeLine code[], size_t count);
+
+/**
+ * https://daisyui.com/components/modal/
+ *
+ * call <id>.showModal() to open the dialog
+ * call <id>.close() to close it
+ * In case if NULL id, id is set to "my_modal"
+ */
+WEBCAPI void WEBC_DaisyModal(char** buffer, Cstr id, Cstr title, Cstr content);
+
+/**
+ * https://daisyui.com/components/pagination/
+ *
+ * @param from Lower limit
+ * @param to Upper limit (non inclusive)
+ * @param checked Initial active index (from <= checked < to)
+ */
+WEBCAPI void WEBC_DaisyPagination(char** buffer, size_t from, size_t to, size_t checked);
+
+/**
+ * https://daisyui.com/components/progress/
+ *
+ * Set max to 0 to enable indeterminate progress
+ */
+WEBCAPI void WEBC_DaisyProgress(char** buffer, size_t width, Cstr color, size_t value, size_t max);
+
+/**
+ * https://daisyui.com/components/radio/
+ */
+WEBCAPI void WEBC_DaisyRadio(char** buffer, Cstr group_name, Cstr color, int checked);
+
+/**
+ * https://daisyui.com/components/range/
+ *
+ * Set step to 0 for smooth range
+ * 
+ * @param size [xs | sm | md | lg]
+ */
+WEBCAPI void WEBC_DaisyRange(
+        char** buffer, 
+        size_t min, 
+        size_t max, 
+        size_t value, 
+        size_t step, 
+        Cstr size, 
+        Cstr color);
+
+/**
+ * https://daisyui.com/components/select/
+ */
+WEBCAPI void WEBC_DaisySelect(char** buffer, Cstr title, char* options[], size_t count, Cstr color);
+
+/**
+ * https://daisyui.com/components/textarea/
+ *
+ * @param size [xs | sm | md | lg]
+ */
+WEBCAPI void WEBC_DaisyTextarea(char** buffer, Cstr placeholder, Cstr color, Cstr size);
+
+/**
+ * https://daisyui.com/components/theme-controller/
+ */
+WEBCAPI void WEBC_DaisyThemeController(char** buffer);
+
+/**
+ * https://daisyui.com/components/toast/
+ */
+WEBCAPI void WEBC_DaisyToast(char** buffer, Cstr text, Cstr color);
+
+/**
+ * https://daisyui.com/components/toggle/
+ */
+WEBCAPI void WEBC_DaisyToggle(char** buffer, int checked, Cstr color, Cstr size);
+
+/**
+ * https://daisyui.com/components/tooltip/
+ */
+WEBCAPI void WEBC_DaisyTooltip(char** buffer, Cstr tooltip, Cstr location, int open, Cstr color, BlockContents toplaceon);
 
 // #endif // DAISY_UI
 

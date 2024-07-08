@@ -32,8 +32,8 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 0
-#define VERSION_PATCH 8
-#define VERSION "0.0.8"
+#define VERSION_PATCH 9
+#define VERSION "0.0.9"
 
 #ifndef WEBCAPI
     #define WEBCAPI extern // Functions defined as 'extern' by default (implicit specifiers)
@@ -74,7 +74,26 @@ typedef enum {
     ATTR_CHECKED,
     ATTR_WIDTH,
     ATTR_ROLE,
+    ATTR_FOR,
+    ATTR_ARIA_LABEL,
+    ATTR_PLACEHOLDER,
+    ATTR_DATA_PREFIX,
+    ATTR_DATA_TIP,
+    ATTR_MIN,
+    ATTR_MAX,
+    ATTR_STEP,
+    ATTR_DISABLED,
+    ATTR_SELECTED,
     ATTR_ONCLICK,
+    ATTR_ONCONTEXTMENU,
+    ATTR_ONDBLCLICK,
+    ATTR_ONMOUSEDOWN,
+    ATTR_ONMOUSEENTER,
+    ATTR_ONMOUSELEAVE,
+    ATTR_ONMOUSEMOVE,
+    ATTR_ONMOUSEOUT,
+    ATTR_ONMOUSEOVER,
+    ATTR_ONMOUSEUP,
     
     ATTRIBUTE_NAME_COUNT
 } AttributeName;
@@ -97,6 +116,19 @@ typedef struct {
 } Tag;
 
 typedef struct {
+    Cstr onclick;
+    Cstr oncontextmenu;
+    Cstr ondblclick;
+    Cstr onmousedown;
+    Cstr onmouseenter;
+    Cstr onmouseleave;
+    Cstr onmousemove;
+    Cstr onmouseout;
+    Cstr onmouseover;
+    Cstr onmouseup;
+} MouseEvents;
+
+typedef struct {
     Cstr style;
     Cstr src;
     Cstr alt;
@@ -111,11 +143,22 @@ typedef struct {
     Cstr type;
     Cstr tabindex;
     Cstr value;
+    Cstr for_;
+    Cstr aria_label;
     Cstr name;
     Cstr role;
+    Cstr min;
+    Cstr max;
+    Cstr step;
     Cstr checked;
-    Cstr onclick;
+    int disabled;
+    int selected;
+    Cstr placeholder;
+    Cstr data_prefix;
+    Cstr data_tip;
+    MouseEvents mouse_events;
 } Modifier;
+
 
 #define CLASS(cls) \
     WEBC_UseModifier((Modifier) { .class = cls }) 
@@ -373,6 +416,14 @@ WEBCAPI void WEBC_FooterStart(char** buffer, AttributeList attributes);
 WEBCAPI void WEBC_FooterEnd(char** buffer);
 WEBCAPI void WEBC_ButtonStart(char** buffer, AttributeList attributes);
 WEBCAPI void WEBC_ButtonEnd(char** buffer);
+WEBCAPI void WEBC_LabelStart(char** buffer, AttributeList attributes);
+WEBCAPI void WEBC_LabelEnd(char** buffer);
+WEBCAPI void WEBC_DialogStart(char** buffer, AttributeList attributes);
+WEBCAPI void WEBC_DialogEnd(char** buffer);
+WEBCAPI void WEBC_FormStart(char** buffer, AttributeList attributes);
+WEBCAPI void WEBC_FormEnd(char** buffer);
+WEBCAPI void WEBC_SelectStart(char** buffer, AttributeList attributes);
+WEBCAPI void WEBC_SelectEnd(char** buffer);
 
 // TODO: maybe add more Start-End pair for easier use
 
@@ -498,13 +549,19 @@ WEBCAPI void WEBC_Video(char** buffer, AttributeList attributes, BlockContents c
 WEBCAPI void WEBC_Wbr(char** buffer, AttributeList attributes, Cstr text);
 
 /* 
-The following macros are used to append the html tags that don't require closing to the buffer
+The following macros are used to append the html tags that don't use tags
 */
 
 #define WEBC_PlainText(buffer, text) \
     WEBC_AppendLn(buffer, text)
 #define WEBC_Javascript(buffer, text) \
     WEBC_PlainText(buffer, text)
+#define WEBC_Comment(buffer, text) \
+    do { \
+        char* comment = clib_format_text("<!--%s-->"); \
+        WEBC_AppendLn(buffer, comment); \
+        free(comment); \
+    } while(0);
 
 /*
 Specific Heading elements
